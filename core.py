@@ -41,8 +41,8 @@ class Human (object):
         a = input("Aktion   : ")
         if a in (2, 3):
             opponents = self.state[4]
-            for i in range(len(opponents)):
-                print "Opponent", i, "is in State", opponents[i], "."
+            for counter in range(len(opponents)):
+                print "Opponent", counter, "is in State", opponents[counter], "."
         p = input("Parameter: ")
         m = input("Mode     : ")
         return a, p, m
@@ -238,9 +238,9 @@ class Player (object):
         self.inbox.append(status)
 
     def print_inbox(self):
-        for i in range(len(self.inbox)):
-            print "---------- " + str(i) + " -----------"
-            print self.inbox[i]
+        for counter in range(len(self.inbox)):
+            print "---------- " + str(counter) + " -----------"
+            print self.inbox[counter]
         print "------------------------"
         self.inbox = []
 
@@ -338,12 +338,12 @@ class World (object):
             player.generate_status()
 
     def generate_players(self):
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
+        for counter1 in range(self.dimensions[0]):
+            for counter2 in range(self.dimensions[1]):
                 player = Player()
                 planet = Planet()
                 player.reset_player()
-                planet.set_coords((i, j))
+                planet.set_coords((counter1, counter2))
                 planet.set_owner(player)
                 player.set_world(self)
                 player.add_planet(planet)
@@ -353,9 +353,9 @@ class World (object):
                 self.add_player(player)
                 self.add_planet(planet)
 
-        for i in range(self.dimensions[0]):
-            for j in range(self.dimensions[1]):
-                self.coords_to_players[(i, j)].generate_nachbarn()
+        for counter1 in range(self.dimensions[0]):
+            for counter2 in range(self.dimensions[1]):
+                self.coords_to_players[(counter1, counter2)].generate_nachbarn()
 
 
 class Game (Thread):
@@ -377,7 +377,7 @@ class Game (Thread):
         self.rundengrenze = grenze
 
     def run(self):
-        for i in range(self.rundengrenze):
+        for counter in range(self.rundengrenze):
             self.world.runde_ausfuehren()
 
 
@@ -404,32 +404,3 @@ if __name__ == "__main__":
     game = Game()
     game.set_up_game(1000, (10, 10))
     game.start()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
