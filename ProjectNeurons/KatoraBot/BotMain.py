@@ -90,7 +90,7 @@ class planet_environment(environment_client, Environment):
     def performAction(self, action):
         assert len(action) == 3
         if(action[0] >= 0 and action[0]<4):
-            action = (int(action[0]),int(action[1]),int(action[2]))
+            action = (min(0,int(action[0])),min(0,int(action[1])),min(0,int(action[2])))
             self.nextMove = action
         else:
             self.nextMove = (0,0,0)
@@ -104,7 +104,7 @@ class planet_environment(environment_client, Environment):
     
     def give_next_state(self, state):
         self.state = state
-        self.experiment.task.setScaling((None,)*9, [(0,4),(0,state[INDEX_TROUPS]+1),(0,2)])
+        self.experiment.task.setScaling((None,)*9, [(0,4),(0,len(state[-1])),(0,2)])
         if self.experiment.reward_id < 0:
             self.experiment.reward_id+=1
             return
