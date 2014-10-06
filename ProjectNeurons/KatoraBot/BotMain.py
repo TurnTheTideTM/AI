@@ -9,7 +9,6 @@ from pybrain.rl.environments import Environment
 from PlanetEnvironment import environment_client
 from pybrain.rl.agents.learning import LearningAgent
 from pybrain.rl.learners.directsearch.enac import ENAC
-from pybrain.structure.modules.neuronlayer import NeuronLayer
 from pybrain.rl.experiments.experiment import Experiment
 from pybrain.tools.shortcuts import buildNetwork
 
@@ -45,7 +44,6 @@ class episodic_planet_task(EpisodicTask):
         EpisodicTask.reset(self)
         self.score_before = 0
     
-
 class planet_experiment(Experiment):
     
     def __init__(self, episodic, learning):
@@ -63,6 +61,7 @@ class planet_experiment(Experiment):
         assert self.stepid == self.reward_id+1
         reward = self.task.getReward()
         self.agent.giveReward(reward)
+        self.reward_id+=1
         return reward
 
 class planet_environment(environment_client, Environment):
