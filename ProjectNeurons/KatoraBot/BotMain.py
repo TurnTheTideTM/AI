@@ -47,14 +47,13 @@ class episodic_planet_task(EpisodicTask):
 class planet_experiment(Experiment):
     
     def __init__(self, episodic, learning):
-        self.reward_id = 0
+        self.reward_id = -1
         super(planet_experiment, self).__init__(episodic, learning)
         
     def _oneInteraction(self):
         if(self.stepid > self.reward_id):
             return
         self.stepid += 1
-        
         self.agent.integrateObservation(self.task.getObservation())
         self.task.performAction(self.agent.getAction())
         
@@ -103,7 +102,11 @@ class planet_environment(environment_client, Environment):
     
     def give_next_state(self, state):
         self.state = state
-        self.experiment.follow_with_reward()
+        if self.experiment.reward_id < 0:
+            self.experiment.reward_id+=1
+            return
+        else:
+            self.experiment.follow_with_reward()
         
     def reset(self):
         self.nextMove = (0,0,0)
