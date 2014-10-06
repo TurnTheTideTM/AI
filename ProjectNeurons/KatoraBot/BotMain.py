@@ -54,6 +54,7 @@ class planet_experiment(Experiment):
         if(self.stepid > self.reward_id):
             return
         self.stepid += 1
+        
         self.agent.integrateObservation(self.task.getObservation())
         self.task.performAction(self.agent.getAction())
         
