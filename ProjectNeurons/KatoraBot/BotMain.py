@@ -17,7 +17,10 @@ INDEX_FUNDS = 0
 INDEX_TROUPS = 1
 INDEX_MODE = 3
 INDEX_PROD = 2
-INDEX_SURR = 4
+INDEX_PLANETS = 4
+INDEX_SURR = 5
+
+INPUT_NEURON_COUNT = 9
 
 class episodic_planet_task(EpisodicTask):
 
@@ -36,7 +39,7 @@ class episodic_planet_task(EpisodicTask):
         return difference
     
     def evaluate_score(self,state):
-        return 0
+        return state[INDEX_FUNDS]+state[INDEX_TROUPS]*100+state[INDEX_PLANETS]*1000
     
     def reset(self):
         EpisodicTask.reset(self)
@@ -63,10 +66,15 @@ class planet_experiment(Experiment):
         return reward
 
 class planet_environment(environment_client, Environment):
+    
+    ai_count = 0
+    
     def __init__(self):
+        self.this_ai_count = planet_environment.ai_count
+        planet_environment.ai_count+=1
         self.nextMove = (0,0,0)
         self.state = None
-        network = buildNetwork(9,100,3)
+        network = buildNetwork(INPUT_NEURON_COUNT,100,3)
         enac_learner = ENAC()
         learning_agent = LearningAgent(network, enac_learner)
         self.experiment = planet_experiment(episodic_planet_task(self),learning_agent)
@@ -75,11 +83,13 @@ class planet_environment(environment_client, Environment):
         return self.state[INDEX_FUNDS] != 0
     
     def getSensors(self):
-        return self.state
+        a = (self.state[:-1]+self.state[-1])[:INPUT_NEURON_COUNT]
+        a = a+(INPUT_NEURON_COUNT-len(a))*(0,)
     
     def performAction(self, action):
         assert len(action) == 3
         if(action[0] >= 0 and action[0]<4):
+            action = (int(action[0]),int(action[1]),int(action[2]))
             self.nextMove = action
         else:
             self.nextMove = (0,0,0)
@@ -87,6 +97,9 @@ class planet_environment(environment_client, Environment):
     def ask_next_move(self):
         self.experiment._oneInteraction()
         return self.nextMove
+    
+    def get_name(self):
+        return "KatoraBot"+str(self.this_ai_count)
     
     def give_next_state(self, state):
         self.state = state
