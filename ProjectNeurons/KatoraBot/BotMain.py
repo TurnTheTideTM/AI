@@ -94,11 +94,17 @@ class planet_environment(environment_client, Environment):
             choice = int(action[0])%4
             number = int(action[1])
             if choice == 1:
-                number = number%(int(self.state[INDEX_FUNDS])/100)
+                    number = number%((int(self.state[INDEX_FUNDS])/100)+1)
             elif choice == 2:
-                number = number%(len(self.state[-1]))
+                if(len(self.state[-1])==0):
+                    choice=0
+                else:
+                    number = number%(len(self.state[-1]))
             elif choice == 3:
-                number = number%(len(self.state[-1]))
+                if(len(self.state[-1])==0):
+                    choice=0
+                else:
+                    number = number%(len(self.state[-1]))
             newMode = int(action[2])%3
             take_action = (choice, number, newMode)
             self.nextMove = take_action
