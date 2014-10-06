@@ -85,6 +85,7 @@ class planet_environment(environment_client, Environment):
     def getSensors(self):
         a = (self.state[:-1]+self.state[-1]) [:INPUT_NEURON_COUNT]
         a = a+(INPUT_NEURON_COUNT-len(a))*(0,)
+        return a
     
     def performAction(self, action):
         assert len(action) == 3
@@ -103,7 +104,7 @@ class planet_environment(environment_client, Environment):
     
     def give_next_state(self, state):
         self.state = state
-        self.experiment.task.setScaling([None,]*9, [(0,4),(0,state[INDEX_TROUPS]+1),(0,2)])
+        self.experiment.task.setScaling((None,)*9, [(0,4),(0,state[INDEX_TROUPS]+1),(0,2)])
         if self.experiment.reward_id < 0:
             self.experiment.reward_id+=1
             return

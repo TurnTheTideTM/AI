@@ -421,7 +421,7 @@ if __name__ == "__main__":
     from random import shuffle
 
     HUMANS = 0
-    NEURONS = 1
+    NEURONS = 100
 
     AI_POOL = []
 
