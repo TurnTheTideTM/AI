@@ -12,7 +12,7 @@ INDEX_FUNDS = 0
 INDEX_TROUPS = 1
 INDEX_MODE = 2
 INDEX_PROD = 3
-INDEX_SURR = 4
+INDEX_SURR = 7
 
 class episodic_planet_task(EpisodicTask):
     
