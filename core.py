@@ -348,10 +348,8 @@ class World (object):
                 player.set_world(self)
                 player.add_planet(planet)
                 player.add_coords()
-                if i == 0 and j == 0:
-                    player.add_ai(Human())
-                else:
-                    player.add_ai(DummyAI())
+                player.add_ai(AI_POOL[0])
+                AI_POOL.remove(AI_POOL[0])
                 self.add_player(player)
                 self.add_planet(planet)
 
@@ -384,7 +382,24 @@ class Game (Thread):
 
 
 if __name__ == "__main__":
-    import time
+    from ProjectNeurons.KatoraBot.BotMain import planet_environment
+    from random import shuffle
+
+    HUMANS = 1
+    NEURONS = 50
+
+    AI_POOL = []
+
+    for i in range(HUMANS):
+        AI_POOL.append(Human())
+
+    for i in range(NEURONS):
+        AI_POOL.append(planet_environment())
+
+    for i in range(100 - HUMANS - NEURONS):
+        AI_POOL.append(DummyAI())
+
+        shuffle(AI_POOL)
 
     game = Game()
     game.set_up_game(1000, (10, 10))
