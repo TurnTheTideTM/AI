@@ -20,8 +20,6 @@ INDEX_PROD = 2
 INDEX_SURR = 4
 
 class episodic_planet_task(EpisodicTask):
-    
-    
 
     def __init__(self, planetEnv):
         self.discount = 0
@@ -47,15 +45,22 @@ class episodic_planet_task(EpisodicTask):
 
 class planet_experiment(Experiment):
     
-    def __init__(self):
-        self.rewardID = 0
-        super(planet_experiment, self).__init__()
+    def __init__(self, episodic, learning):
+        self.reward_id = 0
+        super(planet_experiment, self).__init__(episodic, learning)
         
     def _oneInteraction(self):
+        if(self.stepid > self.reward_id):
+            return
         self.stepid += 1
         self.agent.integrateObservation(self.task.getObservation())
         self.task.performAction(self.agent.getAction())
-
+        
+    def follow_with_reward(self):
+        assert self.stepid == self.reward_id+1
+        reward = self.task.getReward()
+        self.agent.giveReward(reward)
+        return reward
 
 class planet_environment(environment_client, Environment):
     def __init__(self):
@@ -80,11 +85,12 @@ class planet_environment(environment_client, Environment):
             self.nextMove = (0,0,0)
         
     def ask_next_move(self):
+        self.experiment._oneInteraction()
         return self.nextMove
     
     def give_next_state(self, state):
         self.state = state
-        self.experiment.doInteractions(1)
+        self.experiment.follow_with_reward()
         
     def reset(self):
         self.nextMove = (0,0,0)
