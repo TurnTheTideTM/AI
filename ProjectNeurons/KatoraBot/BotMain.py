@@ -7,20 +7,26 @@ Created on 06.10.2014
 from pybrain.rl.environments import EpisodicTask
 from pybrain.rl.environments import Environment
 from PlanetEnvironment import environment_client
+from pybrain.rl.agents.learning import LearningAgent
+from pybrain.rl.learners.directsearch.enac import ENAC
+from pybrain.structure.modules.neuronlayer import NeuronLayer
+from pybrain.rl.experiments.experiment import Experiment
+from pybrain.tools.shortcuts import buildNetwork
 
 INDEX_FUNDS = 0
 INDEX_TROUPS = 1
-INDEX_MODE = 2
-INDEX_PROD = 3
-INDEX_SURR = 7
+INDEX_MODE = 3
+INDEX_PROD = 2
+INDEX_SURR = 4
 
 class episodic_planet_task(EpisodicTask):
     
-    score_before = 0
+    
 
     def __init__(self, planetEnv):
         self.discount = 0
         self.env = planetEnv
+        self.score_before = 0
         
     def isFinished(self):
         planet_environment.is_finished()
@@ -38,14 +44,29 @@ class episodic_planet_task(EpisodicTask):
         EpisodicTask.reset(self)
         self.score_before = 0
     
-class planet_environment(environment_client, Environment):
-    nextMove = (0,0,0)
-    state = None
+
+class planet_experiment(Experiment):
+    
     def __init__(self):
-        pass
+        self.rewardID = 0
+        super(planet_experiment, self).__init__()
+        
+    def _oneInteraction(self):
+        self.stepid += 1
+        self.agent.integrateObservation(self.task.getObservation())
+        self.task.performAction(self.agent.getAction())
+
+
+class planet_environment(environment_client, Environment):
+    def __init__(self):
+        self.nextMove = (0,0,0)
+        self.state = None
+        network = buildNetwork(9,100,3)
+        enac_learner = ENAC()
+        learning_agent = LearningAgent(network, enac_learner)
+        self.experiment = planet_experiment(episodic_planet_task(self),learning_agent)
     
     def is_finished(self):
-        #Use of index 0...
         return self.state[INDEX_FUNDS] != 0
     
     def getSensors(self):
@@ -63,6 +84,7 @@ class planet_environment(environment_client, Environment):
     
     def give_next_state(self, state):
         self.state = state
+        self.experiment.doInteractions(1)
         
     def reset(self):
         self.nextMove = (0,0,0)

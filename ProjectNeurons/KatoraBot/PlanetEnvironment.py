@@ -10,3 +10,5 @@ class environment_client(object):
         pass
     def give_next_state(self, state):
         pass
+    def add_player(self,player):
+        pass
