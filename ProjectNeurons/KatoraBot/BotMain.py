@@ -70,6 +70,7 @@ class planet_environment(environment_client, Environment):
     
     def __init__(self):
         self.this_ai_count = planet_environment.ai_count
+        self.finished = False
         planet_environment.ai_count+=1
         self.nextMove = (0,0,0)
         self.state = None
@@ -80,7 +81,7 @@ class planet_environment(environment_client, Environment):
         self.experiment.task.clipping = False
     
     def is_finished(self):
-        return self.state[INDEX_FUNDS] != 0
+        return self.finished
     
     def getSensors(self):
         a = (self.state[:-1]+self.state[-1]) [:INPUT_NEURON_COUNT]
@@ -106,6 +107,7 @@ class planet_environment(environment_client, Environment):
         return "KatoraBot"+str(self.this_ai_count)
     
     def give_next_state(self, state):
+        self.finished = True
         self.state = state
         self.experiment.task.setScaling((None,)*9, (None,)*3)
         if self.experiment.reward_id < 0:
@@ -113,11 +115,13 @@ class planet_environment(environment_client, Environment):
             return
         else:
             self.experiment.follow_with_reward()
+            
+            
+    def reset_game(self):
+        finished = True
         
     def reset(self):
         self.nextMove = (0,0,0)
         self.state = None
-        self.experiment.task.reset()
-        self.experiment.agent.reset()
         
 

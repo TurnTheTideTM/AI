@@ -16,3 +16,6 @@ class environment_client(object):
         pass
     def get_name(self):
         return "TBI, bad AI"
+    
+    def reset_game(self):
+        pass
