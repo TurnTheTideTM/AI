@@ -224,6 +224,7 @@ class Player (object):
         if target.mode == 1:
             price += UEBERNAHMEPREIS * MODEEFFEKT
         grundgebuehr = price
+        if self.rohstoffe < grundgebuehr: return
         price += target.rohstoffe
         if self.rohstoffe > price:
             self.einmaliges_einkommen -= price
@@ -345,6 +346,9 @@ class World (object):
                 planet.set_mode(player.move[2])
             player.rohstoffe = int(player.rohstoffe)
             player.generate_status()
+            if player.ai.get_name() == "KatoraBot0":
+                player.print_inbox()
+                print "Aktion:", player.move
 
     def generate_players(self):
         for counter1 in range(self.dimensions[0]):
@@ -384,7 +388,6 @@ class World (object):
                 player.add_coords()
                 self.add_planet(planet)
 
-
     def end_game(self):
         scoreboard = {}
         for player in self.players:
@@ -395,7 +398,7 @@ class World (object):
                 scoreboard[score].append(player)
             else:
                 scoreboard[score] = [player]
-            player.ai.reset()
+            player.ai.reset_game()
         for player in self.loosers:
             score = player.rohstoffe
             score += player.truppen * TRUPPENPREIS
