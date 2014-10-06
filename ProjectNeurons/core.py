@@ -341,6 +341,8 @@ class World (object):
                 player.rohstoffe += player.produktion
             player.generate_nachbarn()
             player.mode = player.move[2]
+            for planet in player.planeten:
+                planet.set_mode(player.move[2])
             player.rohstoffe = int(player.rohstoffe)
             player.generate_status()
 
@@ -364,6 +366,25 @@ class World (object):
             for counter2 in range(self.dimensions[1]):
                 self.coords_to_players[(counter1, counter2)].generate_nachbarn()
 
+    def reset_all_players(self):
+        self.players += self.loosers
+        self.loosers = []
+        self.planets = []
+        self.coords_to_planets = {}
+        self.coords_to_players = {}
+        for counter1 in range(self.dimensions[0]):
+            for counter2 in range(self.dimensions[1]):
+                counter = counter1 * 10 + counter2
+                player = self.players[counter]
+                planet = Planet()
+                player.reset_player()
+                planet.set_coords((counter1, counter2))
+                planet.set_owner(player)
+                player.add_planet(planet)
+                player.add_coords()
+                self.add_planet(planet)
+
+
     def end_game(self):
         scoreboard = {}
         for player in self.players:
@@ -384,12 +405,13 @@ class World (object):
             else:
                 scoreboard[score] = [player]
             player.ai.reset()
-        scores = scoreboard.keys()
-        sorted(scores, reverse=True)
+        scores = sorted(scoreboard.keys(), reverse=True)
 
-        for score in scoreboard:
+        for score in scores:
             for player in scoreboard[score]:
                 print score, "Points:", player.ai.get_name()
+
+        self.reset_all_players()
 
 
 class Game (Thread):
@@ -412,6 +434,7 @@ class Game (Thread):
 
     def run(self):
         for counter in range(self.rundengrenze):
+            print "Runde", counter
             self.world.runde_ausfuehren()
         self.world.end_game()
 
@@ -437,5 +460,7 @@ if __name__ == "__main__":
         shuffle(AI_POOL)
 
     game = Game()
-    game.set_up_game(1000, (10, 10))
-    game.start()
+    game.set_up_game(500, (10, 10))
+    game.run()
+    print "--------------------------------"
+    game.run()
