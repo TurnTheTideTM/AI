@@ -27,6 +27,9 @@ class DummyAI (object):
     def reset(self):
         pass
 
+    def get_name(self):
+        return "DummyAI"
+
 
 class Human (object):
     def __init__(self):
@@ -52,6 +55,9 @@ class Human (object):
 
     def reset(self):
         pass
+
+    def get_name(self):
+        return "Human"
 
 
 class Planet(object):
@@ -142,6 +148,7 @@ class Player (object):
                 self.truppen,
                 self.produktion,
                 self.mode,
+                len(self.planeten),
                 self.get_nachbar_data())
 
     def reset_player(self):
@@ -357,6 +364,33 @@ class World (object):
             for counter2 in range(self.dimensions[1]):
                 self.coords_to_players[(counter1, counter2)].generate_nachbarn()
 
+    def end_game(self):
+        scoreboard = {}
+        for player in self.players:
+            score = player.rohstoffe
+            score += player.truppen * TRUPPENPREIS
+            score += len(player.planeten) * UEBERNAHMEPREIS
+            if score in scoreboard:
+                scoreboard[score].append(player)
+            else:
+                scoreboard[score] = [player]
+            player.ai.reset()
+        for player in self.loosers:
+            score = player.rohstoffe
+            score += player.truppen * TRUPPENPREIS
+            score += len(player.planeten) * UEBERNAHMEPREIS
+            if score in scoreboard:
+                scoreboard[score].append(player)
+            else:
+                scoreboard[score] = [player]
+            player.ai.reset()
+        scores = scoreboard.keys()
+        sorted(scores, reverse=True)
+
+        for score in scoreboard:
+            for player in scoreboard[score]:
+                print score, "Points:", player.ai.get_name()
+
 
 class Game (Thread):
     def __init__(self):
@@ -379,14 +413,15 @@ class Game (Thread):
     def run(self):
         for counter in range(self.rundengrenze):
             self.world.runde_ausfuehren()
+        self.world.end_game()
 
 
 if __name__ == "__main__":
     from ProjectNeurons.KatoraBot.BotMain import planet_environment
     from random import shuffle
 
-    HUMANS = 1
-    NEURONS = 50
+    HUMANS = 0
+    NEURONS = 0
 
     AI_POOL = []
 
