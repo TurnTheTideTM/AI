@@ -12,8 +12,6 @@ class environment_client(object):
         pass
     def add_player(self,player):
         pass
-    def begin_game(self, initial_state):
-        pass
     def end_game(self, tuple_of_outcome):
         pass
     def get_name(self):

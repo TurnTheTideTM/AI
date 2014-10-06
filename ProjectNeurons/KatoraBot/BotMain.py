@@ -77,6 +77,7 @@ class planet_environment(environment_client, Environment):
         enac_learner = ENAC()
         learning_agent = LearningAgent(network, enac_learner)
         self.experiment = planet_experiment(episodic_planet_task(self),learning_agent)
+        self.experiment.task.clipping = False
     
     def is_finished(self):
         return self.state[INDEX_FUNDS] != 0
@@ -102,6 +103,7 @@ class planet_environment(environment_client, Environment):
     
     def give_next_state(self, state):
         self.state = state
+        self.experiment.task.setScaling([None,]*9, [(0,4),(0,state[INDEX_TROUPS]+1),(0,2)])
         if self.experiment.reward_id < 0:
             self.experiment.reward_id+=1
             return
