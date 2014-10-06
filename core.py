@@ -149,7 +149,7 @@ class Player (object):
                 self.produktion,
                 self.mode,
                 len(self.planeten),
-                self.get_nachbar_data())
+                tuple(self.get_nachbar_data()))
 
     def reset_player(self):
         self.rohstoffe = 100

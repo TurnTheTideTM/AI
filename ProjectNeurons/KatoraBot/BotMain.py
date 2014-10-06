@@ -82,7 +82,7 @@ class planet_environment(environment_client, Environment):
         return self.state[INDEX_FUNDS] != 0
     
     def getSensors(self):
-        a = (self.state[:-1]+self.state[-1])[:INPUT_NEURON_COUNT]
+        a = (self.state[:-1]+self.state[-1]) [:INPUT_NEURON_COUNT]
         a = a+(INPUT_NEURON_COUNT-len(a))*(0,)
     
     def performAction(self, action):
