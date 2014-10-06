@@ -417,7 +417,7 @@ class Game (Thread):
 
 
 if __name__ == "__main__":
-    from ProjectNeurons.KatoraBot.BotMain import planet_environment
+    from KatoraBot.BotMain import planet_environment
     from random import shuffle
 
     HUMANS = 0
