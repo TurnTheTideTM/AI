@@ -91,9 +91,15 @@ class planet_environment(environment_client, Environment):
     def performAction(self, action):
         assert len(action) == 3
         if(action[0] >= 0 and action[0]<4):
-            choice = action[0]
-            number = action[1]
-            newMode = action[2]
+            choice = int(action[0])%4
+            number = int(action[1])
+            if choice == 1:
+                number = number%(int(self.state[INDEX_FUNDS])/100)
+            elif choice == 2:
+                number = number%(len(self.state[-1]))
+            elif choice == 3:
+                number = number%(len(self.state[-1]))
+            newMode = int(action[2])%3
             take_action = (choice, number, newMode)
             self.nextMove = take_action
         else:
